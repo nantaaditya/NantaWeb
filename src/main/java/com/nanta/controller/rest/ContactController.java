@@ -28,12 +28,14 @@ import com.nanta.validator.Validator;
 public class ContactController {
   @Autowired
   private ContactService contactService;
+  @Autowired
+  private BaseConfiguration baseConfiguration;
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse save(@RequestParam String requestId,
       @RequestBody ContactCaptchaDto contactCaptchaDto) throws Exception {
-    CaptchaResponse captchaResponse = RecapthcaValidator
-        .checkReCaptcha(BaseConfiguration.CAPTCHA_DEPLOY_KEY, contactCaptchaDto.getCaptchaResponse());
+    CaptchaResponse captchaResponse = RecapthcaValidator.checkReCaptcha(
+        baseConfiguration.getCaptchaPrivateKey(), contactCaptchaDto.getCaptchaResponse());
     if (captchaResponse.getSuccess()) {
       Validator.checkSaveContact(contactCaptchaDto);
       contactService.save(contactCaptchaDto);

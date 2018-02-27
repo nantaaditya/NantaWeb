@@ -1,8 +1,21 @@
 package com.nanta.base;
 
-public interface BaseConfiguration {
-  String CAPTCHA_LOCAL_KEY = "captcha key for development";
-  String CAPTCHA_DEPLOY_KEY = "captcha key for deployment";
-  
-  String BASE_URL = "http://localhost:8080";
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+@Component
+public class BaseConfiguration {
+  @Value("${google.captcha.private.key}")
+  private String CAPTCHA_PRIVATE_KEY;
+  @Value("${application.base.url}")
+  private String BASE_URL;
+
+  public String getCaptchaPrivateKey() {
+    return this.CAPTCHA_PRIVATE_KEY;
+  }
+
+  public String getBaseUrl(){
+    return this.BASE_URL;
+  }
 }

@@ -23,13 +23,15 @@ import com.nanta.validator.RecapthcaValidator;
 public class AuthenticateController {
   @Autowired
   private AuthenticateService authenticateService;
+  @Autowired
+  private BaseConfiguration baseConfiguration;
 
   @RequestMapping(value = ApiPath.LOGIN, method = RequestMethod.POST,
       consumes = {MediaType.APPLICATION_JSON_VALUE})
   public SingleResponse<String> login(@RequestParam String requestId, @RequestBody UserDto userDto)
       throws Exception {
     CaptchaResponse captchaResponse = RecapthcaValidator
-        .checkReCaptcha(BaseConfiguration.CAPTCHA_DEPLOY_KEY, userDto.getCaptchaResponse());
+        .checkReCaptcha(baseConfiguration.getCaptchaPrivateKey(), userDto.getCaptchaResponse());
     if (captchaResponse.getSuccess()) {
       String jwtToken =
           authenticateService.authenticate(userDto.getUsername(), userDto.getPassword());

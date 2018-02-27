@@ -33,6 +33,8 @@ public class BlogServiceImplementation implements BlogService {
   private FileService fileService;
   @Autowired
   private PageService pageService;
+  @Autowired
+  private BaseConfiguration baseConfiguration;
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
@@ -47,7 +49,7 @@ public class BlogServiceImplementation implements BlogService {
     else {
       fileService.uploadFile(file, "/post/", postDto.getUrl());
       postDto.setImage("/resource/post/" + postDto.getUrl() + ".jpg");
-      Page page = new Page(BaseConfiguration.BASE_URL + "/blog/" + postDto.getUrl(), 0,
+      Page page = new Page(baseConfiguration.getBaseUrl() + "/blog/" + postDto.getUrl(), 0,
           NantaUtils.html2text(postDto.getPost().substring(0, 275)),
           "Nanta, Nanta Aditya, Nanta Aditya's website, Nanta Aditya's profile, Nanta Aditya's blog, Nanta Aditya's photography",
           "index, follow", true);
