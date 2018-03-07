@@ -10,6 +10,8 @@ public class PostDto {
   private String url;
   private String createdBy;
   private Date createdDate;
+  private String description;
+  private String keywords;
   private boolean status;
 
   public PostDto() {}
@@ -85,4 +87,21 @@ public class PostDto {
   public void setCreatedBy(String createdBy) {
     this.createdBy = createdBy;
   }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getKeywords() {
+    return keywords;
+  }
+
+  public void setKeywords(String keywords) {
+    this.keywords = keywords;
+  }
+
 }
