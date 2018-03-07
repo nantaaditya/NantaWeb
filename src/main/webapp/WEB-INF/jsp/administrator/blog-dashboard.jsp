@@ -234,7 +234,7 @@
 												<label class="label label-default">Title</label> <input
 													type="text" class="form-control" ng-model="blog.title"
 													required />
-											</div>
+											</div>																					
 											<div class="form-group">
 												<label class="label label-default">File</label> <span
 													id="uploader-file" class="input-group-addon"
@@ -243,6 +243,16 @@
 													nv-file-select uploader="uploader" filter="jsonFilter"
 													ng-required="!uploader.queue[0].file.name" required>
 												</span>
+											</div>
+											<div class="form-group">
+												<label class="label label-default">Keywords</label> <input
+													type="text" class="form-control" ng-model="blog.keywords"
+													required />
+											</div>
+											<div class="form-group">
+												<label class="label label-default">Description</label> <input
+													type="text" class="form-control" ng-model="blog.description"
+													required />
 											</div>
 											<div class="form-group">
 												<label class="label label-default">Post</label>
@@ -279,6 +289,16 @@
 												<label class="label label-default">Title</label> <input
 													type="text" class="form-control"
 													ng-model="activeBlog.title" disabled />
+											</div>
+											<div class="form-group">
+												<label class="label label-default">Keywords</label> <input
+													type="text" class="form-control" ng-model="activeBlog.keywords"
+													required />
+											</div>
+											<div class="form-group">
+												<label class="label label-default">Description</label> <input
+													type="text" class="form-control" ng-model="activeBlog.description"
+													required />
 											</div>
 											<div class="form-group">
 												<label class="label label-default">Post</label>
