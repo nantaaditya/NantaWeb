@@ -8,7 +8,7 @@ angular.module('loginController').controller(
           $scope.oldPassword;
           $scope.newPassword;
           $scope.user = {};
-          $scope.profile = "development";
+          $scope.profile = "production";
                     
           // HANDLER
           var initHandler = function() {

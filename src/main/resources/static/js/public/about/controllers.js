@@ -8,7 +8,7 @@ angular
                         SaveContactFactory) {
                   // VARIABLE
                   $scope.contact = {};
-                  $scope.profile = "development";
+                  $scope.profile = "production";
 
                   // HANDLER
                   var initHandler = function() {
