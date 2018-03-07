@@ -97,13 +97,7 @@ public class PublicController {
     pageService.accessPage(request.getRequestURL().toString());
     Page page = pageService.findByUrl(request.getRequestURL().toString());
     PostDto postDto = blogService.findByUrl(url);
-
-    if (page != null) {
-      model.addObject("url", page.getUrl());
-      model.addObject("description", page.getDescription());
-      model.addObject("keywords", page.getKeywords());
-      model.addObject("robots", page.getRobots());
-    }
+    
     if (postDto != null) {
       model.addObject("createdBy", postDto.getCreatedBy());
       model.addObject("createdDate", dateFormat.format(postDto.getCreatedDate()));
@@ -111,9 +105,16 @@ public class PublicController {
       model.addObject("image", postDto.getImage());
       model.addObject("post", postDto.getPost());
       model.addObject("title", postDto.getTitle());
+      if (page != null) {
+        model.addObject("url", page.getUrl());
+        model.addObject("description", postDto.getDescription());
+        model.addObject("keywords", postDto.getKeywords());
+        model.addObject("robots", page.getRobots());
+      }
     } else {
       throw new PageNotFoundException();
     }
+        
     model.setViewName("/post");
     return model;
   }
