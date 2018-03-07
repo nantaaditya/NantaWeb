@@ -3,7 +3,7 @@
 <html>
 <head>
 
-<title>Nanta</title>
+<title>Nanta Aditya's Website</title>
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -61,6 +61,14 @@
 <script src="/js/services/dirPagination.js"></script>
 <script src="/js/public/blog/controllers.js"></script>
 <script src="/js/public/blog/app.js"></script>
+<script async
+	src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6542581225360208",
+    enable_page_level_ads: true
+  });
+</script>
 </head>
 
 <body class="hold-transition skin-blue-light layout-top-nav fixed"

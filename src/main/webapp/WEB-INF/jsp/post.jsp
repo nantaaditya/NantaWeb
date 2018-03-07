@@ -3,7 +3,7 @@
 <html>
 <head>
 
-<title>Nanta</title>
+<title>Nanta Aditya's Website | ${title}</title>
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -57,6 +57,14 @@
 <script src="/js/interceptor/response-interceptor.js"></script>
 <script src="/js/util/util-service.js"></script>
 <script src="/js/security/security-service.js"></script>
+<script async
+	src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6542581225360208",
+    enable_page_level_ads: true
+  });
+</script>
 </head>
 
 <body class="hold-transition skin-blue-light layout-top-nav fixed">
@@ -91,7 +99,7 @@
 							<li><a href="/">Home</a></li>
 							<li class="active"><a href="/blog">Blog</a></li>
 							<li><a href="/gallery">Gallery</a></li>
-							<li><a href="/about">About me</a></li>
+ 							<li><a href="/about">About me</a></li>
 						</ul>
 					</div>
 				</div>
@@ -105,7 +113,7 @@
 				<section class="content-header">
 					<div class="row">
 						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-							<h1 class="text-blue">${title}</h1>
+							<h2 class="text-blue">${title}</h2>
 							<ol class="breadcrumb" style="background: #fff">
 								<li><a href="/blog">Blog</a></li>
 								<li class="active">${title}</li>
@@ -249,14 +257,12 @@
 	<link rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
-	<script
-		src="/js/prism/prism.js"></script>
-	<link rel="stylesheet"
-		href="/js/prism/prism.css" />
+	<script src="/js/prism/prism.js"></script>
+	<link rel="stylesheet" href="/js/prism/prism.css" />
 	<script
 		src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
 	<script async
-		src="https://www.googletagmanager.com/gtag/js?id=UA-114339618-1"></script>
+		src="https://www.googletagmanager.com/gtag/js?id=UA-114339618-1"></script>	
 	<script>
     $(window).on('load', function() {
       // Animate loader off screen
@@ -272,7 +278,7 @@
     }
     gtag('js', new Date());
 
-    gtag('config', 'UA-114339618-1');
+    gtag('config', 'UA-114339618-1');    
   </script>
 </body>
 

@@ -3,7 +3,7 @@
 <html>
 <head>
 
-<title>Nanta</title>
+<title>Nanta Aditya's Website</title>
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
