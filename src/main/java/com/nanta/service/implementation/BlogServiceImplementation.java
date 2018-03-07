@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nanta.base.BaseConfiguration;
+import com.nanta.base.UiPath;
 import com.nanta.converter.BlogConverter;
 import com.nanta.converter.PostConverter;
 import com.nanta.dto.BlogDto;
@@ -19,10 +20,10 @@ import com.nanta.dto.PostDto;
 import com.nanta.entity.Blog;
 import com.nanta.entity.Page;
 import com.nanta.repository.BlogRepository;
+import com.nanta.repository.PageRepository;
 import com.nanta.service.BlogService;
 import com.nanta.service.FileService;
 import com.nanta.service.PageService;
-import com.nanta.util.NantaUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,6 +34,8 @@ public class BlogServiceImplementation implements BlogService {
   private FileService fileService;
   @Autowired
   private PageService pageService;
+  @Autowired
+  private PageRepository pageRepository;
   @Autowired
   private BaseConfiguration baseConfiguration;
 
@@ -50,9 +53,7 @@ public class BlogServiceImplementation implements BlogService {
       fileService.uploadFile(file, "/post/", postDto.getUrl());
       postDto.setImage("/resource/post/" + postDto.getUrl() + ".jpg");
       Page page = new Page(baseConfiguration.getBaseUrl() + "/blog/" + postDto.getUrl(), 0,
-          NantaUtils.html2text(postDto.getPost().substring(0, 275)),
-          "Nanta, Nanta Aditya, Nanta Aditya's website, Nanta Aditya's profile, Nanta Aditya's blog, Nanta Aditya's photography",
-          "index, follow", true);
+          postDto.getDescription(), postDto.getKeywords(), "index, follow", true);
 
       blogRepository.save(PostConverter.toEntity(postDto));
       pageService.save(page);
@@ -79,8 +80,11 @@ public class BlogServiceImplementation implements BlogService {
   @Transactional(readOnly = false, rollbackFor = Exception.class)
   public void delete(String id) throws Exception {
     Blog blog = blogRepository.findOne(id);
+    Page page = pageRepository
+        .findByUrl(baseConfiguration.getBaseUrl() + UiPath.BLOG + "/" + blog.getUrl());
     fileService.deleteFile("/post/", blog.getUrl() + ".jpg");
     blogRepository.delete(id);
+    pageRepository.delete(page);
   }
 
   @Override
@@ -90,7 +94,13 @@ public class BlogServiceImplementation implements BlogService {
 
   @Override
   public PostDto findByUrl(String url) throws Exception {
-    return PostConverter.toDto(blogRepository.findByUrl(url));
+    Page page = pageRepository.findByUrl(baseConfiguration.getBaseUrl() + UiPath.BLOG + "/" + url);
+    PostDto postDto = PostConverter.toDto(blogRepository.findByUrl(url));
+    if (postDto != null) {
+      postDto.setDescription(page.getDescription());
+      postDto.setKeywords(page.getKeywords());
+    }
+    return postDto;
   }
 
   @Override
