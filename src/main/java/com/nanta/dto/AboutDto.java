@@ -1,20 +1,12 @@
 package com.nanta.dto;
 
-public class AboutDto {
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class AboutDto implements Serializable {
   private String description;
-
-  public AboutDto() {}
-
-  public AboutDto(String description) {
-    this.description = description;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
 }

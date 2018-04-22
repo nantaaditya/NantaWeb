@@ -1,10 +1,11 @@
 package com.nanta.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CaptchaResponse {
+public class CaptchaResponse implements Serializable {
   @JsonProperty
   private Boolean success;
 
@@ -12,7 +13,7 @@ public class CaptchaResponse {
   private List<String> errorCodes;
 
   public Boolean getSuccess() {
-    return success;
+    return this.success;
   }
 
   public void setSuccess(Boolean success) {
@@ -20,7 +21,7 @@ public class CaptchaResponse {
   }
 
   public List<String> getErrorCodes() {
-    return errorCodes;
+    return this.errorCodes;
   }
 
   public void setErrorCodes(List<String> errorCodes) {
