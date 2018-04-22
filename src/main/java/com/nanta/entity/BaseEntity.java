@@ -19,8 +19,15 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @MappedSuperclass
 @EntityListeners(value = AuditingEntityListener.class)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseEntity implements Serializable {
   public static final String COLUMN_ID = "ID";
   public static final String COLUMN_MARK_FOR_DELETE = "MARK_FOR_DELETE";
@@ -61,81 +68,5 @@ public class BaseEntity implements Serializable {
   @Temporal(value = TemporalType.TIMESTAMP)
   @Column(name = BaseEntity.COLUMN_UPDATED_DATE, nullable = false)
   private Date updatedDate;
-
-  public BaseEntity() {}
-
-  public BaseEntity(String id, boolean markForDelete, Long version, String createdBy,
-      Date createdDate, String updatedBy, Date updatedDate) {
-    this.id = id;
-    this.markForDelete = markForDelete;
-    this.version = version;
-    this.createdBy = createdBy;
-    this.createdDate = createdDate;
-    this.updatedBy = updatedBy;
-    this.updatedDate = updatedDate;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public boolean isMarkForDelete() {
-    return markForDelete;
-  }
-
-  public void setMarkForDelete(boolean markForDelete) {
-    this.markForDelete = markForDelete;
-  }
-
-  public Long getVersion() {
-    return version;
-  }
-
-  public void setVersion(Long version) {
-    this.version = version;
-  }
-
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public Date getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(Date createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
-
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
-
-  public Date getUpdatedDate() {
-    return updatedDate;
-  }
-
-  public void setUpdatedDate(Date updatedDate) {
-    this.updatedDate = updatedDate;
-  }
-
-  @Override
-  public String toString() {
-    return "BaseEntity [id=" + id + ", markForDelete=" + markForDelete + ", version=" + version
-        + ", createdBy=" + createdBy + ", createdDate=" + createdDate + ", updatedBy=" + updatedBy
-        + ", updatedDate=" + updatedDate + "]";
-  }
 
 }

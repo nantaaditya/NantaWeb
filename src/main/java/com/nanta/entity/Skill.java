@@ -3,33 +3,16 @@ package com.nanta.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "N_SKILL")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Skill extends BaseEntity {
   private String name;
   private double percentage;
-
-  public Skill() {}
-
-  public Skill(String name, double percentage) {
-    this.name = name;
-    this.percentage = percentage;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public double getPercentage() {
-    return percentage;
-  }
-
-  public void setPercentage(double percentage) {
-    this.percentage = percentage;
-  }
-
 }

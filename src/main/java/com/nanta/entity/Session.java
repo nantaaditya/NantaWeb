@@ -11,9 +11,18 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = Session.TABLE_NAME,
     uniqueConstraints = {@UniqueConstraint(columnNames = {Session.COLUMN_USERNAME})})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Session implements Serializable {
   public static final String TABLE_NAME = "N_SESSION";
   public static final String COLUMN_ID = "ID";
@@ -37,56 +46,4 @@ public class Session implements Serializable {
   @Column(name = Session.COLUMN_HOSTNAME, nullable = false)
   private String hostname;
 
-  public Session() {}
-
-  public Session(String username, String sessionId, String hostname) {
-    this.username = username;
-    this.sessionId = sessionId;
-    this.hostname = hostname;
-  }
-
-  public Session(String id, String username, String sessionId, String hostname) {
-    this.id = id;
-    this.username = username;
-    this.sessionId = sessionId;
-    this.hostname = hostname;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getSessionId() {
-    return sessionId;
-  }
-
-  public void setSessionId(String sessionId) {
-    this.sessionId = sessionId;
-  }
-
-  public String getHostname() {
-    return hostname;
-  }
-
-  public void setHostname(String hostname) {
-    this.hostname = hostname;
-  }
-
-  @Override
-  public String toString() {
-    return "Session [id=" + id + ", username=" + username + ", sessionId=" + sessionId
-        + ", hostname=" + hostname + "]";
-  }
 }
