@@ -1,6 +1,7 @@
 package com.nanta.controller.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,13 +27,14 @@ public class AboutController {
   public BaseResponse update(@RequestParam String requestId, @RequestBody AboutDto aboutDto)
       throws Exception {
     Validator.checkAbout(aboutDto);
-    aboutService.update(aboutDto);
+    this.aboutService.update(aboutDto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Update about success");
   }
 
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-  public SingleResponse<AboutDto> get(@RequestParam String requestId) throws Exception {
-    return new SingleResponse<AboutDto>(true, requestId, HttpStatus.OK,
-        "Get about success", aboutService.get());
+  @Cacheable(cacheNames = "about")
+  public SingleResponse<AboutDto> getOne(@RequestParam String requestId) throws Exception {
+    return new SingleResponse<AboutDto>(true, requestId, HttpStatus.OK, "Get about success",
+        this.aboutService.getOne());
   }
 }
