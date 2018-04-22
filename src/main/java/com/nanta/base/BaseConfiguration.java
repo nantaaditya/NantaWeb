@@ -1,7 +1,6 @@
 package com.nanta.base;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +14,7 @@ public class BaseConfiguration {
     return this.CAPTCHA_PRIVATE_KEY;
   }
 
-  public String getBaseUrl(){
+  public String getBaseUrl() {
     return this.BASE_URL;
   }
 }
