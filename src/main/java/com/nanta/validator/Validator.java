@@ -64,4 +64,12 @@ public class Validator {
         "title" + MUST_NOT_BE_BLANK);
     Precondition.checkArgument(StringUtils.isEmpty(postDto.getPost()), "post" + MUST_NOT_BE_BLANK);
   }
+
+  public static boolean isAvailable(Object object) {
+    if (object != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
