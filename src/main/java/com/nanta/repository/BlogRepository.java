@@ -11,5 +11,7 @@ import com.nanta.entity.Blog;
 public interface BlogRepository extends JpaRepository<Blog, String> {
   Blog findByUrl(String url) throws Exception;
 
+  Blog findByUrlAndStatusTrue(String url) throws Exception;
+  
   List<Blog> findByStatusTrue() throws Exception;
 }

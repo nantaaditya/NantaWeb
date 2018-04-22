@@ -7,5 +7,4 @@ import com.nanta.entity.About;
 
 @Repository
 public interface AboutRepository extends JpaRepository<About, String> {
-
 }
