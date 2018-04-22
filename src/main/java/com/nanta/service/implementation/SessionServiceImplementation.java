@@ -23,18 +23,19 @@ public class SessionServiceImplementation implements SessionService {
     if (StringUtils.isEmpty(username)) {
       throw new InvalidException("Invalid username");
     }
-    Session savedSession = sessionRepository.findByUsername(username);
+    Session savedSession = this.sessionRepository.findByUsername(username);
     if (savedSession != null) {
-      sessionRepository.delete(savedSession.getId());
-      sessionRepository.flush();
+      this.sessionRepository.delete(savedSession.getId());
+      this.sessionRepository.flush();
     }
-    Session session = new Session(username, Credential.getSessionId(), Credential.getHostname());
-    sessionRepository.save(session);
+    Session session = Session.builder().username(username).sessionId(Credential.getSessionId())
+        .hostname(Credential.getHostname()).build();
+    this.sessionRepository.save(session);
   }
 
   @Override
   public boolean isAuthorized() throws Exception {
-    Session session = sessionRepository.findByUsernameAndSessionId(Credential.getUsername(),
+    Session session = this.sessionRepository.findByUsernameAndSessionId(Credential.getUsername(),
         Credential.getSessionId());
     return session != null;
   }
@@ -42,10 +43,10 @@ public class SessionServiceImplementation implements SessionService {
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
   public void remove() throws Exception {
-    Session session = sessionRepository.findByUsernameAndSessionId(Credential.getUsername(),
+    Session session = this.sessionRepository.findByUsernameAndSessionId(Credential.getUsername(),
         Credential.getSessionId());
     if (session != null) {
-      sessionRepository.delete(session.getId());
+      this.sessionRepository.delete(session.getId());
     }
   }
 }

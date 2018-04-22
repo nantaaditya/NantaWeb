@@ -3,12 +3,13 @@ package com.nanta.service.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nanta.converter.SkillConverter;
 import com.nanta.dto.SkillDto;
-import com.nanta.entity.Skill;
 import com.nanta.repository.SkillRepository;
 import com.nanta.service.SkillService;
 
@@ -20,20 +21,22 @@ public class SkillServiceImplementation implements SkillService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @Cacheable(value = "skill")
   public void save(SkillDto skillDto) throws Exception {
-    Skill skill = SkillConverter.toEntity(skillDto);
-    skillRepository.save(skill);
+    this.skillRepository.save(SkillConverter.toEntity(skillDto));
   }
 
   @Override
+  @Cacheable(value = "skill")
   public List<SkillDto> findAll() throws Exception {
-    return SkillConverter.toDtos(skillRepository.findAll());
+    return SkillConverter.toDtos(this.skillRepository.findAll());
   }
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @CacheEvict(value = "skill", allEntries = true)
   public void delete(String id) throws Exception {
-    skillRepository.delete(id);
+    this.skillRepository.delete(id);
   }
 
 }

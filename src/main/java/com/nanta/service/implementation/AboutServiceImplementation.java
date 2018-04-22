@@ -19,14 +19,13 @@ public class AboutServiceImplementation implements AboutService {
   @Transactional(readOnly = false, rollbackFor = Exception.class)
   @Override
   public void update(AboutDto aboutDto) throws Exception {
-    About about = aboutRepository.findAll().get(0);
+    About about = this.aboutRepository.findAll().get(0);
     about.setDescription(aboutDto.getDescription());
-    aboutRepository.save(about);
+    this.aboutRepository.save(about);
   }
 
   @Override
-  public AboutDto get() throws Exception {
-    AboutDto aboutDto = AboutConverter.toDto(aboutRepository.findAll().get(0));
-    return aboutDto;
+  public AboutDto getOne() throws Exception {
+    return AboutConverter.toDto(this.aboutRepository.findAll().get(0));
   }
 }

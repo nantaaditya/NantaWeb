@@ -18,6 +18,7 @@ import com.nanta.repository.UserRepository;
 import com.nanta.service.AuthenticateService;
 import com.nanta.service.SessionService;
 import com.nanta.util.Credential;
+import com.nanta.validator.Validator;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -51,12 +52,12 @@ public class AuthenticateServiceImplementation implements AuthenticateService {
   @Transactional(readOnly = false, rollbackFor = Exception.class)
   public String authenticate(String username, String password) throws Exception {
     String digestedPassword = this.generatePassword(password);
-    User user =
-        userRepository.findByUsernameAndPasswordAndMarkForDeleteFalse(username, digestedPassword);
-    if (user == null) {
+    User user = this.userRepository.findByUsernameAndPasswordAndMarkForDeleteFalse(username,
+        digestedPassword);
+    if (!Validator.isAvailable(user)) {
       throw new BadCredentialsException("Invalid username or password");
     }
-    sessionService.create(username);
+    this.sessionService.create(username);
     return this.generateJwtToken(user);
   }
 
@@ -97,13 +98,13 @@ public class AuthenticateServiceImplementation implements AuthenticateService {
   public void changePassword(ChangePasswordDto changePasswordDto) throws Exception {
     String oldPassword = this.generatePassword(changePasswordDto.getOldPassword());
     String newPassword = this.generatePassword(changePasswordDto.getNewPassword());
-    User user = userRepository.findByUsernameAndPasswordAndMarkForDeleteFalse(
+    User user = this.userRepository.findByUsernameAndPasswordAndMarkForDeleteFalse(
         changePasswordDto.getUsername(), oldPassword);
-    if (user == null) {
+    if (!Validator.isAvailable(user)) {
       throw new EntityNotFoundException("username and old password not matching.");
     } else {
       user.setPassword(newPassword);
-      userRepository.save(user);
+      this.userRepository.save(user);
     }
   }
 

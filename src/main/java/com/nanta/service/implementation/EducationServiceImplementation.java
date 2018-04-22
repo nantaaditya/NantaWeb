@@ -3,12 +3,13 @@ package com.nanta.service.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nanta.converter.EducationConverter;
 import com.nanta.dto.EducationDto;
-import com.nanta.entity.Education;
 import com.nanta.repository.EducationRepository;
 import com.nanta.service.EducationService;
 
@@ -20,21 +21,22 @@ public class EducationServiceImplementation implements EducationService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @Cacheable(value = "education")
   public void save(EducationDto educationDto) throws Exception {
-    Education education = EducationConverter.toEntity(educationDto);
-    educationRepository.save(education);
+    this.educationRepository.save(EducationConverter.toEntity(educationDto));
   }
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @CacheEvict(value = "education", allEntries = true)
   public void delete(String id) throws Exception {
-    educationRepository.delete(id);;
+    this.educationRepository.delete(id);;
   }
 
   @Override
+  @Cacheable(value = "education")
   public List<EducationDto> findAll() throws Exception {
-    List<EducationDto> educationDtos = EducationConverter.toDtos(educationRepository.findAll());
-    return educationDtos;
+    return EducationConverter.toDtos(this.educationRepository.findAll());
   }
 
 }
