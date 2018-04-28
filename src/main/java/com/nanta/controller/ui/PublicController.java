@@ -1,6 +1,7 @@
 package com.nanta.controller.ui;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +31,7 @@ public class PublicController {
   private BlogService blogService;
   private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
   private final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+  private final SimpleDateFormat timestampFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
 
   private ModelAndView generateSEOPage(Page page) {
     ModelAndView model = new ModelAndView();
@@ -40,59 +42,68 @@ public class PublicController {
     return model;
   }
 
+  private void showCurrentPage(String url, long startTime, long endTime) {
+    log.info("You're on page: {} accessed on {}, it took {} ms to respond.", url,
+        this.timestampFormat.format(new Date()), endTime - startTime);
+  }
+
   @RequestMapping(value = UiPath.HOME, method = RequestMethod.GET)
   public ModelAndView dashboardPage(HttpServletRequest request, ModelAndView model)
       throws Exception {
-    log.warn(request.getRequestURL().toString());
+    long startTime = System.currentTimeMillis();
     this.pageService.accessPage(request.getRequestURL().toString());
     Page page = this.pageService.findByUrl(request.getRequestURL().toString());
     if (Validator.isAvailable(page)) {
       model = generateSEOPage(page);
     }
     model.setViewName("/home");
+    this.showCurrentPage(request.getRequestURL().toString(), startTime, System.currentTimeMillis());
     return model;
   }
 
   @RequestMapping(value = UiPath.GALLERY, method = RequestMethod.GET)
   public ModelAndView galleryPage(HttpServletRequest request, ModelAndView model) throws Exception {
-    log.warn(request.getRequestURL().toString());
+    long startTime = System.currentTimeMillis();
     this.pageService.accessPage(request.getRequestURL().toString());
     Page page = this.pageService.findByUrl(request.getRequestURL().toString());
     if (Validator.isAvailable(page)) {
       model = generateSEOPage(page);
     }
     model.setViewName("/gallery");
+    this.showCurrentPage(request.getRequestURL().toString(), startTime, System.currentTimeMillis());
     return model;
   }
 
   @RequestMapping(value = UiPath.ABOUT, method = RequestMethod.GET)
   public ModelAndView aboutPage(HttpServletRequest request, ModelAndView model) throws Exception {
-    log.warn(request.getRequestURL().toString());
+    long startTime = System.currentTimeMillis();
     this.pageService.accessPage(request.getRequestURL().toString());
     Page page = this.pageService.findByUrl(request.getRequestURL().toString());
     if (Validator.isAvailable(page)) {
       model = generateSEOPage(page);
     }
     model.setViewName("/about");
+    this.showCurrentPage(request.getRequestURL().toString(), startTime, System.currentTimeMillis());
     return model;
   }
 
   @RequestMapping(value = UiPath.BLOG, method = RequestMethod.GET)
   public ModelAndView blogPage(HttpServletRequest request, ModelAndView model) throws Exception {
-    log.warn(request.getRequestURL().toString());
+    long startTime = System.currentTimeMillis();
     this.pageService.accessPage(request.getRequestURL().toString());
     Page page = this.pageService.findByUrl(request.getRequestURL().toString());
     if (Validator.isAvailable(page)) {
       model = generateSEOPage(page);
     }
     model.setViewName("/blog");
+    this.showCurrentPage(request.getRequestURL().toString(), startTime, System.currentTimeMillis());
     return model;
   }
 
   @RequestMapping(value = UiPath.BLOG + "/{url}", method = RequestMethod.GET)
   public ModelAndView postPage(@PathVariable String url, HttpServletRequest request,
       ModelAndView model) throws Exception {
-    log.warn(request.getRequestURL().toString());
+    long startTime = System.currentTimeMillis();
     this.pageService.accessPage(request.getRequestURL().toString());
     Page page = this.pageService.findByUrl(request.getRequestURL().toString());
     PostDto postDto = this.blogService.findByUrl(url);
@@ -105,13 +116,17 @@ public class PublicController {
       model.addObject("post", postDto.getPost());
       model.addObject("title", postDto.getTitle());
       if (Validator.isAvailable(page)) {
-        model = generateSEOPage(page);
+        model.addObject("url", page.getUrl());
+        model.addObject("description", page.getDescription());
+        model.addObject("keywords", page.getKeywords());
+        model.addObject("robots", page.getRobots());
       }
     } else {
       throw new PageNotFoundException();
     }
 
     model.setViewName("/post");
+    this.showCurrentPage(request.getRequestURL().toString(), startTime, System.currentTimeMillis());
     return model;
   }
 }
