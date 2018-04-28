@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nanta.base.CacheTopics;
 import com.nanta.converter.ProjectConverter;
 import com.nanta.dto.ProjectDto;
 import com.nanta.entity.Project;
@@ -43,7 +44,7 @@ public class ProjectServiceImplementation implements ProjectService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @Cacheable(value = "project")
+  @Cacheable(value = CacheTopics.PROJECT)
   public void save(MultipartFile file, ProjectDto projectDto) throws Exception {
     String source = this.fileService.uploadFile(file, WEB_PATH, projectDto.getName());
     String destination = generateImageFilePath(projectDto.getName());
@@ -54,14 +55,14 @@ public class ProjectServiceImplementation implements ProjectService {
   }
 
   @Override
-  @Cacheable(value = "project")
+  @Cacheable(value = CacheTopics.PROJECT, condition = "#result!=null")
   public List<ProjectDto> findAll() throws Exception {
     return ProjectConverter.toDtos(this.projectRepository.findAll());
   }
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @CacheEvict(value = "project", allEntries = true)
+  @CacheEvict(value = CacheTopics.PROJECT, allEntries = true)
   public void delete(String path, String id) throws Exception {
     Project project = this.projectRepository.findOne(id);
     this.fileService.deleteFile(path, project.getName().concat(".jpg"));

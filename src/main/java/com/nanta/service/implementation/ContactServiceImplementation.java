@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nanta.base.CacheTopics;
 import com.nanta.converter.ContactCaptchaConverter;
 import com.nanta.converter.ContactConverter;
 import com.nanta.dto.ContactCaptchaDto;
@@ -31,13 +32,13 @@ public class ContactServiceImplementation implements ContactService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @Cacheable(value = "contact")
+  @Cacheable(value = CacheTopics.EMAIL)
   public void save(ContactCaptchaDto contactCaptchaDto) throws Exception {
     this.contactRepository.save(ContactCaptchaConverter.toEntity(contactCaptchaDto));
   }
 
   @Override
-  @Cacheable(value = "contact")
+  @Cacheable(value = CacheTopics.EMAIL, condition = "#result!=null")
   public List<ContactDto> findAll() throws Exception {
     return ContactConverter.toDtos(this.contactRepository.findAll());
   }
@@ -56,6 +57,7 @@ public class ContactServiceImplementation implements ContactService {
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
   public void reply(ReplyMessageDto replyMessageDto) throws Exception {
+    long startDate = System.currentTimeMillis();
     Contact contact = this.contactRepository.findOne(replyMessageDto.getId());
     if (contact.getStatus().equalsIgnoreCase("read")) {
       contact.setStatus("replied");
@@ -72,6 +74,9 @@ public class ContactServiceImplementation implements ContactService {
     } catch (Exception e) {
       log.error(e.getCause().toString());
     }
+    log.info("sending email to: {}, message: {}, time to send: {} in ms",
+        replyMessageDto.getEmail(), replyMessageDto.getEmail(),
+        System.currentTimeMillis() - startDate);
   }
 
 }

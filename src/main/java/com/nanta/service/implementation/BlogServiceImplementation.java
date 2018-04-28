@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nanta.base.CacheTopics;
 import com.nanta.converter.BlogConverter;
 import com.nanta.converter.PostConverter;
 import com.nanta.dto.BlogDto;
@@ -28,8 +30,11 @@ import com.nanta.service.FileService;
 import com.nanta.service.PageService;
 import com.nanta.validator.Validator;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class BlogServiceImplementation implements BlogService {
   @Autowired
   private BlogRepository blogRepository;
@@ -40,10 +45,9 @@ public class BlogServiceImplementation implements BlogService {
   @Autowired
   private PageRepository pageRepository;
 
-  @Value("${application.base.url}")
-  private String BASE_URL;
+  private String BASE_URL = "http://www.nantaaditya.com";
   private static final String CREATOR = "Nanta";
-  private static final String POST_FILE_PATH = "/post/";
+  private static final String BLOG_FILE_PATH = "/post/";
   private static final String BLOG_PATH = "/blog/";
   private static final String ROBOTS = "index, follow";
   private static final long COUNTER = 0;
@@ -66,19 +70,20 @@ public class BlogServiceImplementation implements BlogService {
   }
 
   private String generateUri(String uri) {
-    return this.BLOG_URL + uri;
+    log.info(BLOG_URL + uri);
+    return BLOG_URL + uri;
   }
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @Cacheable(cacheManager = "post", key = "#postDto.url")
+  @Cacheable(value = CacheTopics.BLOG)
   public void save(MultipartFile file, PostDto postDto) throws Exception {
     postDto = onSave(postDto);
 
     if (Validator.isAvailable(this.blogRepository.findByUrl(postDto.getUrl()))) {
       throw new EntityExistsException("url already used");
     } else {
-      this.fileService.uploadFile(file, POST_FILE_PATH, postDto.getUrl());
+      this.fileService.uploadFile(file, BLOG_FILE_PATH, postDto.getUrl());
       postDto.setImage(generateImagePath(postDto.getUrl()));
       Page page = Page.builder().url(generateUri(postDto.getUrl())).counter(COUNTER)
           .description(postDto.getDescription()).keywords(postDto.getKeywords()).robots(ROBOTS)
@@ -91,7 +96,7 @@ public class BlogServiceImplementation implements BlogService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @CachePut(value = "post", key = "#postDto.url")
+  @CachePut(value = CacheTopics.BLOG)
   public void update(PostDto postDto) throws Exception {
     Blog blog = this.blogRepository.findOne(postDto.getId());
     blog.setPost(postDto.getPost());
@@ -100,6 +105,7 @@ public class BlogServiceImplementation implements BlogService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @CachePut(value = CacheTopics.BLOG)
   public void toggle(String id, boolean status) throws Exception {
     Blog blog = this.blogRepository.findOne(id);
     blog.setStatus(status);
@@ -108,25 +114,27 @@ public class BlogServiceImplementation implements BlogService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @CacheEvict(value = "post", allEntries = true)
+  @CacheEvict(value = CacheTopics.BLOG, allEntries = true)
   public void delete(String id) throws Exception {
     Blog blog = this.blogRepository.findOne(id);
-    Page page = this.pageRepository.findByUrl(this.BLOG_URL + blog.getUrl());
-    this.fileService.deleteFile(POST_FILE_PATH, blog.getUrl() + ".jpg");
-    this.blogRepository.delete(id);
-    this.pageRepository.delete(page);
+    Page page = this.pageRepository.findByUrl(BLOG_URL + blog.getUrl());
+    if (Validator.isAvailable(blog) && Validator.isAvailable(page)) {
+      this.fileService.deleteFile(BLOG_FILE_PATH, blog.getUrl() + ".jpg");
+      this.blogRepository.delete(id);
+      this.pageRepository.delete(page);
+    }else {
+      throw new EntityNotFoundException("couldn't find data to remove");
+    }
   }
 
   @Override
-  @Cacheable(value = "post")
   public List<BlogDto> findAll() throws Exception {
     return BlogConverter.toDtos(this.blogRepository.findAll());
   }
 
   @Override
-  @Cacheable(value = "blog")
   public PostDto findByUrl(String url) throws Exception {
-    Page page = this.pageRepository.findByUrl(this.BLOG_URL + url);
+    Page page = this.pageRepository.findByUrl(BLOG_URL + url);
     PostDto postDto = PostConverter.toDto(this.blogRepository.findByUrlAndStatusTrue(url));
     if (Validator.isAvailable(postDto) && Validator.isAvailable(page)) {
       postDto.setDescription(page.getDescription());
@@ -136,7 +144,7 @@ public class BlogServiceImplementation implements BlogService {
   }
 
   @Override
-  @Cacheable(value = "blogs")
+  @Cacheable(value = CacheTopics.BLOG, condition = "#result != null")
   public List<BlogDto> findAllActive() throws Exception {
     return BlogConverter.toDtos(this.blogRepository.findByStatusTrue());
   }

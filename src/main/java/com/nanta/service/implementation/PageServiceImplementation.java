@@ -1,6 +1,7 @@
 package com.nanta.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class PageServiceImplementation implements PageService {
   }
 
   @Override
-  @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @Transactional(readOnly = false, rollbackFor = Exception.class)  
   public void accessPage(String url) throws Exception {
     Page page = this.pageRepository.findByUrl(url);
     if (Validator.isAvailable(page)) {

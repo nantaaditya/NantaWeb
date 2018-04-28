@@ -43,7 +43,7 @@ public class FileServiceImplementation implements FileService {
     long fileSize = file.getSize();
 
     File directory = new File(this.filePath + path);
-    log.info(directory.getPath());
+    log.info("upload file path {}, file name {}, full path {}", path, name, directory.getPath());
     directory.mkdirs();
 
     if (this.nantaUtils.isValidContentType(fileType)) {

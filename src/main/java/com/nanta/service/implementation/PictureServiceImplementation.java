@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nanta.base.CacheTopics;
 import com.nanta.converter.PictureConverter;
 import com.nanta.dto.PictureDto;
 import com.nanta.entity.Picture;
@@ -40,7 +41,7 @@ public class PictureServiceImplementation implements PictureService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @Cacheable(value = "picture")
+  @Cacheable(value = CacheTopics.IMAGE)
   public void save(MultipartFile file, PictureDto pictureDto) throws Exception {
     String source = this.fileService.uploadFile(file, GALLERY_PATH, pictureDto.getTitle());
     String destination = generateImageFilePath(pictureDto.getTitle());
@@ -50,14 +51,14 @@ public class PictureServiceImplementation implements PictureService {
   }
 
   @Override
-  @Cacheable(value = "picture")
+  @Cacheable(value = CacheTopics.IMAGE, condition = "#result!=null")
   public List<PictureDto> findAll() throws Exception {
     return PictureConverter.toDtos(this.pictureRepository.findAll());
   }
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
-  @CacheEvict(value = "picture", allEntries = true)
+  @CacheEvict(value = CacheTopics.IMAGE, allEntries = true)
   public void delete(String path, String id) throws Exception {
     Picture picture = this.pictureRepository.findOne(id);
     this.fileService.deleteFile(path, picture.getTitle().concat(".jpg"));
@@ -67,6 +68,7 @@ public class PictureServiceImplementation implements PictureService {
 
   @Override
   @Transactional(readOnly = false, rollbackFor = Exception.class)
+  @Cacheable(value = CacheTopics.IMAGE)
   public void toggle(String id, boolean status) throws Exception {
     Picture picture = this.pictureRepository.findOne(id);
     picture.setStatus(status);
@@ -74,7 +76,7 @@ public class PictureServiceImplementation implements PictureService {
   }
 
   @Override
-  @Cacheable(value = "picture")
+  @Cacheable(value = CacheTopics.IMAGE, condition = "#result!=null")
   public List<PictureDto> findAllActive() throws Exception {
     return PictureConverter.toDtos(this.pictureRepository.findByStatusTrue());
   }
