@@ -24,14 +24,14 @@ public class AuthenticateController {
   @Autowired
   private AuthenticateService authenticateService;
   @Autowired
-  private GoogleCaptchaConfiguration baseConfiguration;
+  private GoogleCaptchaConfiguration googleCaptchaConfiguration;
 
   @RequestMapping(value = ApiPath.LOGIN, method = RequestMethod.POST,
       consumes = {MediaType.APPLICATION_JSON_VALUE})
   public SingleResponse<String> login(@RequestParam String requestId, @RequestBody UserDto userDto)
       throws Exception {
     CaptchaResponse captchaResponse = RecapthcaValidator
-        .checkReCaptcha(baseConfiguration.getCaptchaPrivateKey(), userDto.getCaptchaResponse());
+        .checkReCaptcha(googleCaptchaConfiguration.getCaptchaPrivateKey(), userDto.getCaptchaResponse());
     if (captchaResponse.getSuccess()) {
       String jwtToken =
           authenticateService.authenticate(userDto.getUsername(), userDto.getPassword());
