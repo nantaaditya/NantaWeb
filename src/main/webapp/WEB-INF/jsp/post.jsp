@@ -13,7 +13,7 @@
 
 <meta property="og:url" content="${url}" />
 <meta property="og:type" content="Personal website" />
-<meta property="og:title" content="Nanta Aditya's website" />
+<meta property="og:title" content="Nanta Aditya's website | ${title}" />
 <meta property="og:description" content="${description}" />
 <meta property="og:image"
 	content="http://www.nantaaditya.com/resource/web/icon.jpg" />

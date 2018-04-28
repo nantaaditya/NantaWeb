@@ -109,7 +109,7 @@
 							<div class="card hovercard">
 								<div class="cardheader"></div>
 								<div class="avatar">
-									<img alt="" src="http://lorempixel.com/100/100/people/11/">
+									<img alt="" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoTSPfa412HXD6SIeXFsP7JpnxKCn7eHeEmJI6kwXOMVeghvJj">
 								</div>
 								<div class="info">
 									<div class="title">

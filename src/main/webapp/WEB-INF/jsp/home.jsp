@@ -477,6 +477,12 @@
     gtag('js', new Date());
 
     gtag('config', 'UA-114339618-1');
+    /**if ('serviceWorker' in navigator) {
+      // Use the window load event to keep the page load performant
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/js/services/ws.js');
+      });
+    }**/
   </script>
 </body>
 </html>

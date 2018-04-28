@@ -113,7 +113,7 @@
 								</div>
 								<div class="widget-user-image">
 									<img class="img-responsive img-circle"
-										src="https://dummyimage.com/300x300/fff/000&text=Nanta"
+										src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoTSPfa412HXD6SIeXFsP7JpnxKCn7eHeEmJI6kwXOMVeghvJj"
 										alt="User Avatar">
 								</div>
 								<div class="box-footer">
