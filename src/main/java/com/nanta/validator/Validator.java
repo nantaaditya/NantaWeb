@@ -66,10 +66,6 @@ public class Validator {
   }
 
   public static boolean isAvailable(Object object) {
-    if (object != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return (object != null) ? true : false;
   }
 }
