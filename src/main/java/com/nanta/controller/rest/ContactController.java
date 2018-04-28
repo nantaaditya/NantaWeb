@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nanta.base.ApiPath;
-import com.nanta.base.BaseConfiguration;
+import com.nanta.base.GoogleCaptchaConfiguration;
 import com.nanta.dto.CaptchaResponse;
 import com.nanta.dto.ContactCaptchaDto;
 import com.nanta.dto.ContactDto;
@@ -29,13 +29,13 @@ public class ContactController {
   @Autowired
   private ContactService contactService;
   @Autowired
-  private BaseConfiguration baseConfiguration;
+  private GoogleCaptchaConfiguration googleCaptchaConfiguration;
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse save(@RequestParam String requestId,
       @RequestBody ContactCaptchaDto contactCaptchaDto) throws Exception {
     CaptchaResponse captchaResponse = RecapthcaValidator.checkReCaptcha(
-        baseConfiguration.getCaptchaPrivateKey(), contactCaptchaDto.getCaptchaResponse());
+        googleCaptchaConfiguration.getCaptchaPrivateKey(), contactCaptchaDto.getCaptchaResponse());
     if (captchaResponse.getSuccess()) {
       Validator.checkSaveContact(contactCaptchaDto);
       contactService.save(contactCaptchaDto);

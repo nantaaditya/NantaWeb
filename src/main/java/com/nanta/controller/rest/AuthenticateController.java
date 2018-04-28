@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nanta.base.ApiPath;
-import com.nanta.base.BaseConfiguration;
+import com.nanta.base.GoogleCaptchaConfiguration;
 import com.nanta.dto.CaptchaResponse;
 import com.nanta.dto.ChangePasswordDto;
 import com.nanta.dto.UserDto;
@@ -24,7 +24,7 @@ public class AuthenticateController {
   @Autowired
   private AuthenticateService authenticateService;
   @Autowired
-  private BaseConfiguration baseConfiguration;
+  private GoogleCaptchaConfiguration baseConfiguration;
 
   @RequestMapping(value = ApiPath.LOGIN, method = RequestMethod.POST,
       consumes = {MediaType.APPLICATION_JSON_VALUE})
