@@ -6,7 +6,7 @@
 }
 
 .bg-overlay {
-  background: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url("http://www.ncl.ac.uk/media/wwwnclacuk/mccordcentre/images/masthead-quayside.jpg");
+  background: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(/resource/web/masthead-quayside.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -472,7 +472,7 @@ ul.no-style li {
     }
 
     .card.hovercard .cardheader {
-        background: url("http://lorempixel.com/850/280/nature/4/");
+        background: url(/resource/web/blog-background.png);
         background-size: cover;
         height: 135px;
     }
