@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class PageResponse<T> extends BaseResponse {
   private Page<T> content;
 
-  public PageResponse() {}
-
   public PageResponse(boolean success, String requestId, HttpStatus httpCode, String message,
       Page<T> content) {
     super(success, requestId, httpCode, message);
@@ -18,7 +16,7 @@ public class PageResponse<T> extends BaseResponse {
   }
 
   public Page<T> getContent() {
-    return content;
+    return this.content;
   }
 
   public void setContent(Page<T> content) {

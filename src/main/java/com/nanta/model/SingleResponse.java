@@ -8,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class SingleResponse<T> extends BaseResponse {
   private T value;
 
-  public SingleResponse() {}
-
   public SingleResponse(boolean success, String requestId, HttpStatus httpCode, String message,
       T value) {
     super(success, requestId, httpCode, message);
@@ -17,7 +15,7 @@ public class SingleResponse<T> extends BaseResponse {
   }
 
   public T getValue() {
-    return value;
+    return this.value;
   }
 
   public void setValue(T value) {

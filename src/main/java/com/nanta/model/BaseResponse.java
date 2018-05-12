@@ -13,13 +13,12 @@ public class BaseResponse implements Serializable {
   private HttpStatus httpCode;
   private String message;
 
-  public BaseResponse() {}
-
-  public BaseResponse(HttpStatus httpCode, String message){    
+  public BaseResponse(String requestId, HttpStatus httpCode, String message){
+    this.requestId = requestId;
     this.httpCode = httpCode;
     this.message = message;
   }
-  
+
   public BaseResponse(boolean success, String requestId, HttpStatus httpCode, String message) {
     this.success = success;
     this.requestId = requestId;
@@ -28,7 +27,7 @@ public class BaseResponse implements Serializable {
   }
 
   public boolean isSuccess() {
-    return success;
+    return this.success;
   }
 
   public void setSuccess(boolean success) {
@@ -36,7 +35,7 @@ public class BaseResponse implements Serializable {
   }
 
   public String getRequestId() {
-    return requestId;
+    return this.requestId;
   }
 
   public void setRequestId(String requestId) {
@@ -44,7 +43,7 @@ public class BaseResponse implements Serializable {
   }
 
   public HttpStatus getHttpCode() {
-    return httpCode;
+    return this.httpCode;
   }
 
   public void setHttpCode(HttpStatus httpCode) {
@@ -52,7 +51,7 @@ public class BaseResponse implements Serializable {
   }
 
   public String getMessage() {
-    return message;
+    return this.message;
   }
 
   public void setMessage(String message) {
