@@ -1,6 +1,8 @@
 package com.nanta.base;
 
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -11,6 +13,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.nanta.exception.InvalidException;
 import com.nanta.exception.UnauthorizedException;
 import com.nanta.model.BaseResponse;
+import com.nanta.model.ErrorAttribute;
+import com.nanta.model.ListResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,8 +37,8 @@ public class ApiExceptionHandler {
   @ResponseBody
   public BaseResponse handleUnauthorizedException(HttpServletRequest req,
       UnauthorizedException ex) {
-    log.error("Unathorized Access : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    log.error("Unathorized Access {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.UNAUTHORIZED, ex.getMessage());
   }
 
   @ExceptionHandler(AuthenticationException.class)
@@ -40,25 +46,27 @@ public class ApiExceptionHandler {
   @ResponseBody
   public BaseResponse handleJwtInvalidTokenException(HttpServletRequest req,
       AuthenticationException ex) {
-    log.error("Newtwork Authentication Required : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED, ex.getMessage());
+    log.error("Newtwork Authentication Required {}, from {} ", req.getRequestURL(),
+        req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.NETWORK_AUTHENTICATION_REQUIRED,
+        ex.getMessage());
   }
 
   @ExceptionHandler(BadCredentialsException.class)
-  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ResponseBody
   public BaseResponse handleBadCredentialException(HttpServletRequest req,
       BadCredentialsException ex) {
-    log.error("Bad Credential : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+    log.error("Bad credential exception {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.UNAUTHORIZED, ex.getMessage());
   }
 
   @ExceptionHandler(EntityExistsException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
   public BaseResponse handleEntityExistException(HttpServletRequest req, EntityExistsException ex) {
-    log.error("Entity Exist : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.CONFLICT, ex.getMessage());
+    log.error("Entity exist exception {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.CONFLICT, ex.getMessage());
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
@@ -66,8 +74,8 @@ public class ApiExceptionHandler {
   @ResponseBody
   public BaseResponse handleEntityNotFoundException(HttpServletRequest req,
       EntityNotFoundException ex) {
-    log.error("Entity Not Found : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    log.error("Entity not found exception {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.NOT_FOUND, ex.getMessage());
   }
 
   @ExceptionHandler(FileNotFoundException.class)
@@ -75,8 +83,9 @@ public class ApiExceptionHandler {
   @ResponseBody
   public BaseResponse handleFileNotFoundException(HttpServletRequest req,
       FileNotFoundException ex) {
-    log.error("Directory or File Not Found : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    log.error("Directory or file not found exception {}, from {} ", req.getRequestURL(),
+        req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.NOT_FOUND, ex.getMessage());
   }
 
   @ExceptionHandler(FileUploadBase.InvalidContentTypeException.class)
@@ -84,32 +93,48 @@ public class ApiExceptionHandler {
   @ResponseBody
   public BaseResponse handleInvalidContentTypeException(HttpServletRequest req,
       FileUploadBase.InvalidContentTypeException ex) {
-    log.error("File Upload Exception : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
+    log.error("File upload invalid file type exception {},, from {} ", req.getRequestURL(),
+        req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        ex.getMessage());
   }
 
   @ExceptionHandler(FileUploadBase.FileSizeLimitExceededException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
   @ResponseBody
   public BaseResponse handleMaxFileUploadExceededException(HttpServletRequest req,
       FileUploadBase.FileSizeLimitExceededException ex) {
-    log.error("File Upload Exception : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    log.error("File upload size limit exception {}, , from {} ", req.getRequestURL(),
+        req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
   }
 
   @ExceptionHandler(InvalidException.class)
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   @ResponseBody
   public BaseResponse handleInvalid(HttpServletRequest req, Exception ex) {
-    log.error("Invalid Exception : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
+    log.error("Invalid exception {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
   }
 
   @ExceptionHandler(EmptyResultDataAccessException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
   public BaseResponse handleDataNotFound(HttpServletRequest req, Exception ex) {
-    log.error("Data Not Found Exception : " + req.getRequestURL());
-    return new BaseResponse(HttpStatus.BAD_REQUEST, "Data not found");
+    log.error("Data not found exception {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    return new BaseResponse(req.getRemoteAddr(), HttpStatus.BAD_REQUEST, "Data not found");
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ListResponse<ErrorAttribute> handleMethodArgumentNotValid(HttpServletRequest req,
+      MethodArgumentNotValidException ex) {
+    log.error("Bad request exception {}, from {} ", req.getRequestURL(), req.getRemoteAddr());
+    List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+    List<ErrorAttribute> errorAttributes =
+        fieldErrors.stream().map(ErrorAttribute::new).collect(Collectors.toList());
+    return new ListResponse<ErrorAttribute>(false, req.getRemoteAddr(), HttpStatus.BAD_REQUEST,
+        "Bad request", errorAttributes);
   }
 }
