@@ -1,5 +1,7 @@
 package com.nanta.controller.rest;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +22,6 @@ import com.nanta.model.BaseResponse;
 import com.nanta.model.ListResponse;
 import com.nanta.model.SingleResponse;
 import com.nanta.service.ContactService;
-import com.nanta.validator.RecapthcaValidator;
 import com.nanta.validator.Validator;
 
 @RestController
@@ -33,12 +34,12 @@ public class ContactController {
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse save(@RequestParam String requestId,
-      @RequestBody ContactCaptchaDto contactCaptchaDto) throws Exception {
-    CaptchaResponse captchaResponse = RecapthcaValidator.checkReCaptcha(
-        googleCaptchaConfiguration.getCaptchaPrivateKey(), contactCaptchaDto.getCaptchaResponse());
+      @RequestBody @Valid ContactCaptchaDto contactCaptchaDto) throws Exception {
+    CaptchaResponse captchaResponse =
+        Validator.checkReCaptcha(this.googleCaptchaConfiguration.getCaptchaPrivateKey(),
+            contactCaptchaDto.getCaptchaResponse());
     if (captchaResponse.getSuccess()) {
-      Validator.checkSaveContact(contactCaptchaDto);
-      contactService.save(contactCaptchaDto);
+      this.contactService.save(contactCaptchaDto);
       return new BaseResponse(true, requestId, HttpStatus.OK, "Your message has been sent.");
     }
     return new BaseResponse(false, requestId, HttpStatus.BAD_REQUEST,
@@ -48,22 +49,23 @@ public class ContactController {
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
   public ListResponse<ContactDto> findAll(@RequestParam String requestId) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Get message success.",
-        contactService.findAll());
+        this.contactService.findAll());
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET,
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public SingleResponse<ContactDto> findById(@RequestParam String requestId,
       @PathVariable String id) throws Exception {
+    Validator.checkId(id);
     return new SingleResponse<ContactDto>(true, requestId, HttpStatus.OK,
-        "Get message by id success.", contactService.findById(id));
+        "Get message by id success.", this.contactService.findById(id));
   }
 
   @RequestMapping(value = "/reply", method = RequestMethod.POST,
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse reply(@RequestParam String requestId,
-      @RequestBody ReplyMessageDto replyMessageDto) throws Exception {
-    contactService.reply(replyMessageDto);
+      @RequestBody @Valid ReplyMessageDto replyMessageDto) throws Exception {
+    this.contactService.reply(replyMessageDto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Reply message success.");
   }
 }

@@ -23,29 +23,28 @@ import com.nanta.validator.Validator;
 public class ProjectController {
   @Autowired
   private ProjectService projectService;
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public BaseResponse save(@RequestParam String requestId, @RequestPart MultipartFile file,
       @RequestPart String projectDto) throws Exception {
-    ProjectDto dto = objectMapper.readValue(projectDto, ProjectDto.class);
-    projectService.save(file, dto);
+    ProjectDto dto = this.objectMapper.readValue(projectDto, ProjectDto.class);
     Validator.checkSaveProject(dto);
-    projectService.save(file, dto);
+    this.projectService.save(file, dto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Save project success.");
   }
 
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
   public ListResponse<ProjectDto> findAll(@RequestParam String requestId) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Get project success.",
-        projectService.findAll());
+        this.projectService.findAll());
   }
 
   @RequestMapping(method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse delete(@RequestParam String requestId, @RequestParam String path,
       @RequestParam String id) throws Exception {
-    Validator.checkDelete(id);
-    projectService.delete(path, id);
+    Validator.checkId(id);
+    this.projectService.delete(path, id);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Delete project success.");
   }
 

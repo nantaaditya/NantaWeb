@@ -1,5 +1,7 @@
 package com.nanta.controller.rest;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,24 +25,23 @@ public class EducationController {
   private EducationService educationService;
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public BaseResponse save(@RequestParam String requestId, @RequestBody EducationDto educationDto)
-      throws Exception {
-    Validator.checkSaveEducation(educationDto);
-    educationService.save(educationDto);
+  public BaseResponse save(@RequestParam String requestId,
+      @RequestBody @Valid EducationDto educationDto) throws Exception {
+    this.educationService.save(educationDto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Save education success");
   }
 
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
   public ListResponse<EducationDto> findAll(@RequestParam String requestId) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Get education success",
-        educationService.findAll());
+        this.educationService.findAll());
   }
 
   @RequestMapping(method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse delete(@RequestParam String requestId, @RequestParam String id)
       throws Exception {
-    Validator.checkDelete(id);
-    educationService.delete(id);
+    Validator.checkId(id);
+    this.educationService.delete(id);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Delete education success");
   }
 }

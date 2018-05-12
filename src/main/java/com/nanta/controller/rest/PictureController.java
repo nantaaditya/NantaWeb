@@ -24,29 +24,28 @@ import com.nanta.validator.Validator;
 public class PictureController {
   @Autowired
   private PictureService pictureService;
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public BaseResponse save(@RequestParam String requestId, @RequestPart MultipartFile file,
       @RequestPart String pictureDto) throws Exception {
-    PictureDto dto = objectMapper.readValue(pictureDto, PictureDto.class);
-    pictureService.save(file, dto);
+    PictureDto dto = this.objectMapper.readValue(pictureDto, PictureDto.class);
     Validator.checkSavePicture(dto);
-    pictureService.save(file, dto);
+    this.pictureService.save(file, dto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Save picture success.");
   }
 
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
   public ListResponse<PictureDto> findAll(@RequestParam String requestId) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Get picture success.",
-        pictureService.findAll());
+        this.pictureService.findAll());
   }
 
   @RequestMapping(method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse delete(@RequestParam String requestId, @RequestParam String path,
       @RequestParam String id) throws Exception {
-    Validator.checkDelete(id);
-    pictureService.delete(path, id);
+    Validator.checkId(id);
+    this.pictureService.delete(path, id);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Delete picture success.");
   }
 
@@ -54,7 +53,8 @@ public class PictureController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse toggle(@RequestParam String requestId, @PathVariable String id,
       @RequestParam boolean status) throws Exception {
-    pictureService.toggle(id, status);
+    Validator.checkId(id);
+    this.pictureService.toggle(id, status);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Toggle picture status.");
   }
 
@@ -63,6 +63,6 @@ public class PictureController {
   public ListResponse<PictureDto> findAllActive(@RequestParam String requestId,
       @PathVariable boolean status) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Get picture active success.",
-        pictureService.findAllActive());
+        this.pictureService.findAllActive());
   }
 }

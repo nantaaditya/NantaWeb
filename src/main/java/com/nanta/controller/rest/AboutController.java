@@ -1,5 +1,7 @@
 package com.nanta.controller.rest;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,6 @@ import com.nanta.dto.AboutDto;
 import com.nanta.model.BaseResponse;
 import com.nanta.model.SingleResponse;
 import com.nanta.service.AboutService;
-import com.nanta.validator.Validator;
 
 @RestController
 @RequestMapping(value = ApiPath.ABOUT)
@@ -24,9 +25,8 @@ public class AboutController {
   private AboutService aboutService;
 
   @RequestMapping(method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public BaseResponse update(@RequestParam String requestId, @RequestBody AboutDto aboutDto)
+  public BaseResponse update(@RequestParam String requestId, @RequestBody @Valid AboutDto aboutDto)
       throws Exception {
-    Validator.checkAbout(aboutDto);
     this.aboutService.update(aboutDto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Update about success");
   }

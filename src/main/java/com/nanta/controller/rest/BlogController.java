@@ -1,5 +1,7 @@
 package com.nanta.controller.rest;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,27 +29,27 @@ import com.nanta.validator.Validator;
 public class BlogController {
   @Autowired
   private BlogService blogService;
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public BaseResponse save(@RequestParam String requestId, @RequestPart MultipartFile file,
       @RequestPart String postDto) throws Exception {
-    PostDto post = objectMapper.readValue(postDto, PostDto.class);
+    PostDto post = this.objectMapper.readValue(postDto, PostDto.class);
     Validator.checkSaveBlog(post);
-    blogService.save(file, post);
+    this.blogService.save(file, post);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Save post success.");
   }
 
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
   public ListResponse<BlogDto> findAll(@RequestParam String requestId) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Find all post success.",
-        blogService.findAll());
+        this.blogService.findAll());
   }
 
   @RequestMapping(method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE})
-  public BaseResponse update(@RequestParam String requestId, @RequestBody PostDto postDto)
+  public BaseResponse update(@RequestParam String requestId, @RequestBody @Valid PostDto postDto)
       throws Exception {
-    blogService.update(postDto);
+    this.blogService.update(postDto);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Update post success.");
   }
 
@@ -55,7 +57,8 @@ public class BlogController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse toggle(@RequestParam String requestId, @PathVariable String id,
       @PathVariable boolean status) throws Exception {
-    blogService.toggle(id, status);
+    Validator.checkId(id);
+    this.blogService.toggle(id, status);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Toggle post success.");
   }
 
@@ -63,7 +66,8 @@ public class BlogController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public BaseResponse delete(@RequestParam String requestId, @PathVariable String id)
       throws Exception {
-    blogService.delete(id);
+    Validator.checkId(id);
+    this.blogService.delete(id);
     return new BaseResponse(true, requestId, HttpStatus.OK, "Delete post success.");
   }
 
@@ -71,14 +75,15 @@ public class BlogController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public SingleResponse<PostDto> findByUrl(@RequestParam String requestId, @PathVariable String url)
       throws Exception {
+    Validator.checkId(url);
     return new SingleResponse<PostDto>(true, requestId, HttpStatus.OK, "Find by URL success.",
-        blogService.findByUrl(url));
+        this.blogService.findByUrl(url));
   }
 
   @RequestMapping(value = "/active", method = RequestMethod.GET,
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public ListResponse<BlogDto> findAllActive(@RequestParam String requestId) throws Exception {
     return new ListResponse<>(true, requestId, HttpStatus.OK, "Find active post success.",
-        blogService.findAllActive());
+        this.blogService.findAllActive());
   }
 }
