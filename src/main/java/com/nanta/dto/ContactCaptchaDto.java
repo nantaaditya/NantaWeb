@@ -1,15 +1,13 @@
 package com.nanta.dto;
 
+import com.nanta.validator.Required;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ContactCaptchaDto {
-  private String id;
-  private String name;
-  private String email;
-  private String message;
-  private String status;
+public class ContactCaptchaDto extends ContactDto {
+  @Required(message = "please verify you're human")
   private String captchaResponse;
 }

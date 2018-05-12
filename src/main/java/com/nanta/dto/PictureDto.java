@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PictureDto implements Serializable{
-  private String id;
-  private String image;
+public class PictureDto implements Serializable {
+  private String id;  
+  private String image; 
   private String title;
   private boolean status;
 }
