@@ -1,62 +1,50 @@
 package com.nanta.validator;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
-import com.nanta.dto.AboutDto;
-import com.nanta.dto.ContactCaptchaDto;
-import com.nanta.dto.EducationDto;
+import com.nanta.base.RegexType;
+import com.nanta.dto.CaptchaResponse;
 import com.nanta.dto.PictureDto;
 import com.nanta.dto.PostDto;
 import com.nanta.dto.ProjectDto;
-import com.nanta.dto.SkillDto;
 import com.nanta.util.Precondition;
+import com.nanta.util.RegexMatchers;
 
 public class Validator {
-  private static final String MUST_NOT_BE_BLANK = " must not be blank";
+  private static final String MUST_NOT_BE_BLANK = " is required";
+  private static final String URL_NOT_VALID = "url is not valid";
 
-  public static void checkAbout(AboutDto aboutDto) throws Exception {
-    Precondition.checkArgument(StringUtils.isEmpty(aboutDto.getDescription()),
-        "description" + MUST_NOT_BE_BLANK);
+  public static final String RECAPTCHA_VERIFY_URL =
+      "https://www.google.com/recaptcha/api/siteverify";
+
+  public static CaptchaResponse checkReCaptcha(String secret, String response) {
+    MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+    map.add("secret", secret);
+    map.add("response", response);
+    RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.postForObject(RECAPTCHA_VERIFY_URL, map, CaptchaResponse.class);
   }
 
-  public static void checkSaveEducation(EducationDto educationDto) throws Exception {
-    Precondition.checkArgument(StringUtils.isEmpty(educationDto.getName()),
-        "name" + MUST_NOT_BE_BLANK);
-    Precondition.checkArgument(StringUtils.isEmpty(educationDto.getYear()),
-        "year" + MUST_NOT_BE_BLANK);
+  private static String errorMessage(String field) {
+    return String.format("field {} is required", field);
   }
 
-  public static void checkDelete(String id) throws Exception {
-    Precondition.checkArgument(id.isEmpty(), "please select education to delete");
-  }
-
-  public static void checkSaveSkill(SkillDto skillDto) throws Exception {
-    Precondition.checkArgument(StringUtils.isEmpty(skillDto.getName()),
-        "skill" + MUST_NOT_BE_BLANK);
-    Precondition.checkArgument(skillDto.getPercentage() < 0, "skill must not be negative value");
+  public static void checkId(String id) throws Exception {
+    Precondition.checkArgument(StringUtils.isEmpty(id), errorMessage("id"));
   }
 
   public static void checkSaveProject(ProjectDto projectDto) throws Exception {
-    Precondition.checkArgument(StringUtils.isEmpty(projectDto.getName()),
-        "image name" + MUST_NOT_BE_BLANK);
-    Precondition.checkArgument(StringUtils.isEmpty(projectDto.getSite()),
-        "site url" + MUST_NOT_BE_BLANK);
+    Precondition.checkArgument(StringUtils.isEmpty(projectDto.getName()), errorMessage("name"));
+    Precondition.checkArgument(StringUtils.isEmpty(projectDto.getSite()), errorMessage("site"));
+    Precondition.checkArgument(!RegexMatchers.isValid(RegexType.URL, projectDto.getSite()),
+        URL_NOT_VALID);
   }
 
   public static void checkSavePicture(PictureDto pictureDto) throws Exception {
-    Precondition.checkArgument(StringUtils.isEmpty(pictureDto.getTitle()),
-        "image name" + MUST_NOT_BE_BLANK);
-  }
-
-  public static void checkSaveContact(ContactCaptchaDto contactCaptchaDto) throws Exception {
-    Precondition.checkArgument(StringUtils.isEmpty(contactCaptchaDto.getName()),
-        "name" + MUST_NOT_BE_BLANK);
-    Precondition.checkArgument(StringUtils.isEmpty(contactCaptchaDto.getEmail()),
-        "email" + MUST_NOT_BE_BLANK);
-    Precondition.checkArgument(StringUtils.isEmpty(contactCaptchaDto.getMessage()),
-        "message" + MUST_NOT_BE_BLANK);
-    Precondition.checkArgument(StringUtils.isEmpty(contactCaptchaDto.getCaptchaResponse()),
-        "please verify you're human.");
+    Precondition.checkArgument(StringUtils.isEmpty(pictureDto.getTitle()), errorMessage("title"));
   }
 
   public static void checkSaveBlog(PostDto postDto) throws Exception {
