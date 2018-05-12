@@ -13,12 +13,9 @@ import com.nanta.entity.About;
 import com.nanta.repository.AboutRepository;
 import com.nanta.service.AboutService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Transactional(readOnly = true)
 @CacheEvict(value = CacheTopics.ABOUT, allEntries = true)
-@Slf4j
 public class AboutServiceImplementation implements AboutService {
   @Autowired
   private AboutRepository aboutRepository;
@@ -33,8 +30,7 @@ public class AboutServiceImplementation implements AboutService {
 
   @Override
   @Cacheable(value = CacheTopics.ABOUT, condition = "#result != null")
-  public AboutDto getOne() throws Exception {
-    log.debug(CacheTopics.ABOUT);
+  public AboutDto getOne() throws Exception {    
     return AboutConverter.toDto(this.aboutRepository.findAll().get(0));
   }
 }
